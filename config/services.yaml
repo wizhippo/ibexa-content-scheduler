@@ -1,0 +1,22 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            Doctrine\DBAL\Connection: '@ibexa.persistence.connection'
+            Psr\Clock\ClockInterface: '@wizhippo.content_scheduler.clock'
+
+    Wizhippo\IbexaContentScheduler\:
+        resource: '../src/'
+        exclude: '../src/{DependencyInjection,Domain,Security/PolicyProvider.php,WizhippoIbexaContentSchedulerBundle.php}'
+
+    wizhippo.content_scheduler.clock:
+        class: Symfony\Component\Clock\NativeClock
+
+    Wizhippo\IbexaContentScheduler\Controller\:
+        resource: '../src/Controller/'
+        tags: ['controller.service_arguments']
+
+    Wizhippo\IbexaContentScheduler\Tab\MyScheduledContentTab:
+        tags:
+            - { name: ibexa.admin_ui.tab, group: dashboard-my }

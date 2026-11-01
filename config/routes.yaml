@@ -1,0 +1,3 @@
+wizhippo_content_scheduler:
+    resource: '../src/Controller/'
+    type: attribute

@@ -1,0 +1,33 @@
+{% extends '@WizhippoIbexaContentScheduler/base.html.twig' %}
+{% block scheduler_content %}
+<h2>{{ content.name }} — {{ row.action }}</h2>
+<dl>
+    <dt>Status</dt><dd>{{ row.status }}</dd>
+    <dt>Scheduled time</dt><dd>{{ row.run_at|date('Y-m-d H:i P', row.timezone) }} ({{ row.timezone }})</dd>
+    <dt>Version</dt><dd>{{ row.version_no ?: 'All locations' }}</dd>
+    <dt>Translations</dt><dd>{{ row.languages }}</dd>
+    <dt>Attempts</dt><dd>{{ row.attempts }}</dd>
+    <dt>Last updated</dt><dd>{{ row.updated_at|date('Y-m-d H:i:s', 'UTC') }} UTC</dd>
+</dl>
+{% if row.error %}<p class="alert alert-warning">{{ row.error }}</p>{% endif %}
+{% if canManage %}
+    <form method="post" class="mb-4">
+        <input type="hidden" name="_token" value="{{ csrf_token('schedule_' ~ row.id) }}">
+        <input type="hidden" name="revision" value="{{ row.revision }}">
+        <input type="hidden" name="operation" value="reschedule">
+        {% include '@WizhippoIbexaContentScheduler/time_fields.html.twig' %}
+        <p>Rescheduling confirms the current saved draft and publication baseline. Execution still requires the original requester's current permissions.</p>
+        <button class="btn ibexa-btn ibexa-btn--primary" type="submit">Confirm and reschedule</button>
+    </form>
+    <form method="post" class="mb-4">
+        <input type="hidden" name="_token" value="{{ csrf_token('schedule_' ~ row.id) }}">
+        <input type="hidden" name="revision" value="{{ row.revision }}">
+        <input type="hidden" name="operation" value="cancel">
+        <button class="btn ibexa-btn ibexa-btn--secondary" type="submit">Cancel schedule and keep draft</button>
+    </form>
+{% endif %}
+<h3>Audit history</h3>
+<table class="table"><thead><tr><th>Time (UTC)</th><th>Event</th><th>User ID</th><th>Details</th></tr></thead><tbody>
+{% for event in history %}<tr><td>{{ event.occurred_at|date('Y-m-d H:i:s', 'UTC') }}</td><td>{{ event.event }}</td><td>{{ event.actor_id }}</td><td><code>{{ event.details }}</code></td></tr>{% endfor %}
+</tbody></table>
+{% endblock %}

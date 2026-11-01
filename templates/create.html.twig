@@ -1,0 +1,16 @@
+{% extends '@WizhippoIbexaContentScheduler/base.html.twig' %}
+{% block scheduler_content %}
+<h2>Schedule {{ action }} — {{ content.name }}</h2>
+{% if action == 'publish' %}
+<p>Version {{ version }} is saved. Confirm the translations and publication time below. Leaving this page keeps the draft without scheduling it.</p>
+{% else %}<p>This action changes visibility across all content locations. Independently hidden locations and hidden parents remain effective.</p>{% endif %}
+<form method="post">
+    <input type="hidden" name="_token" value="{{ csrf_token('schedule_create_' ~ content.id ~ '_' ~ action ~ '_' ~ version) }}">
+    {% if action == 'publish' %}<fieldset class="mb-3"><legend>Translations</legend>
+        {% for language in languages %}<label class="me-3"><input type="checkbox" name="languages[]" value="{{ language }}" {{ language in selected ? 'checked' }}> {{ language }}</label>{% endfor %}
+    </fieldset>{% endif %}
+    {% include '@WizhippoIbexaContentScheduler/time_fields.html.twig' %}
+    <button class="btn ibexa-btn ibexa-btn--primary" type="submit">Confirm schedule</button>
+    <a href="{{ path('wizhippo_schedule_list', {contentId: content.id, mine: 0}) }}">Back to scheduled actions</a>
+</form>
+{% endblock %}

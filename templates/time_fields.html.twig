@@ -1,0 +1,24 @@
+<div class="mb-3">
+    <label for="schedule-date">Date</label>
+    <input id="schedule-date" class="form-control" type="date" name="date" required value="{{ date }}">
+</div>
+<div class="mb-3">
+    <label for="schedule-time">Time</label>
+    <input id="schedule-time" class="form-control" type="time" name="local_time" step="60" required value="{{ localTime }}" aria-describedby="schedule-time-help">
+    <p id="schedule-time-help">Time is in the timezone selected below. Daylight-saving adjustments are calculated automatically.</p>
+</div>
+<div class="mb-3">
+    <label for="schedule-timezone">Timezone</label>
+    <select id="schedule-timezone" class="form-select" name="timezone" required>
+        {% for zone in timezones %}<option value="{{ zone }}" {{ zone == timezone ? 'selected' }}>{{ zone|replace({'_': ' '}) }}</option>{% endfor %}
+    </select>
+    <p>Execution may be delayed by worker and cache processing.</p>
+</div>
+{% if timeOccurrences %}
+<fieldset class="mb-3">
+    <legend>This time occurs twice when the clocks go back</legend>
+    {% for choice in timeOccurrences %}
+        <div><label><input type="radio" name="occurrence" value="{{ choice.value }}" required {{ occurrence == choice.value ? 'checked' }}> {{ choice.label }}</label></div>
+    {% endfor %}
+</fieldset>
+{% endif %}

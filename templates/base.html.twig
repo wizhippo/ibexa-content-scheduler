@@ -1,0 +1,10 @@
+{% extends '@ibexadesign/ui/layout.html.twig' %}
+{% block title %}Content scheduling{% endblock %}
+{% block content %}
+<div class="container-fluid py-4">
+    <h1>Content scheduling</h1>
+    <p><a href="{{ path('wizhippo_schedule_list') }}">My scheduled content</a> · <a href="{{ path('wizhippo_schedule_list', {mine: 0}) }}">All accessible schedules</a></p>
+    {% if error|default(null) %}<div class="alert alert-danger" role="alert">{{ error }}</div>{% endif %}
+    {% block scheduler_content %}{% endblock %}
+</div>
+{% endblock %}

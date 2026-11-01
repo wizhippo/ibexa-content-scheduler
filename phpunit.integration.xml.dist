@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit bootstrap="tests/integration-bootstrap.php" colors="true">
+    <php><server name="APP_ENV" value="test" force="true" /></php>
+    <testsuites><testsuite name="Host integration"><directory>tests/Integration</directory></testsuite></testsuites>
+</phpunit>

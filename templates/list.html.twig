@@ -1,0 +1,29 @@
+{% extends '@WizhippoIbexaContentScheduler/base.html.twig' %}
+{% block scheduler_content %}
+{% if content %}
+    <h2>{{ content.name }}</h2>
+    {% if content.contentInfo.isPublished() and canSchedule %}
+        <a class="btn ibexa-btn ibexa-btn--secondary" href="{{ path('wizhippo_schedule_create', {contentId: content.id, action: content.contentInfo.isHidden ? 'reveal' : 'hide', version: 0}) }}">Schedule {{ content.contentInfo.isHidden ? 'reveal' : 'hide' }}</a>
+    {% endif %}
+{% endif %}
+<form method="get" class="my-3">
+    {% if content %}<input type="hidden" name="contentId" value="{{ content.id }}">{% endif %}
+    <input type="hidden" name="mine" value="0">
+    <label class="me-3"><input type="checkbox" name="mine" value="1" {{ mine ? 'checked' }}> Only my schedules</label>
+    <label>Status <select name="status" class="form-select">
+        {% for value in ['', 'pending', 'completed', 'cancelled', 'failed', 'conflict'] %}<option value="{{ value }}" {{ status == value ? 'selected' }}>{{ value ?: 'All' }}</option>{% endfor %}
+    </select></label>
+    <button class="btn ibexa-btn ibexa-btn--secondary" type="submit">Filter</button>
+</form>
+<table class="table"><thead><tr><th>Content</th><th>Action</th><th>Version</th><th>Scheduled time</th><th>Status</th><th>Details</th></tr></thead><tbody>
+{% for row in rows %}<tr>
+    <td>{{ row.content_name }}</td><td>{{ row.action }}</td><td>{{ row.version_no ?: '—' }}</td>
+    <td>{{ row.run_at|date('Y-m-d H:i P', row.timezone) }} ({{ row.timezone }})</td><td>{{ row.status }}</td>
+    <td><a href="{{ path('wizhippo_schedule_detail', {id: row.id}) }}">View schedule</a></td>
+</tr>{% else %}<tr><td colspan="6">No accessible schedules on this page.</td></tr>{% endfor %}
+</tbody></table>
+{% set filters = {mine: mine ? 1 : 0, status: status} %}
+{% if content %}{% set filters = filters|merge({contentId: content.id}) %}{% endif %}
+{% if offset > 0 %}<a href="{{ path('wizhippo_schedule_list', filters|merge({offset: max(0, offset - 25)})) }}">Previous</a>{% endif %}
+{% if hasMore %}<a href="{{ path('wizhippo_schedule_list', filters|merge({offset: offset + 25})) }}">Next</a>{% endif %}
+{% endblock %}
